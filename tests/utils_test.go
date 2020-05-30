@@ -1,18 +1,18 @@
 package tests
 
 import (
-	"go-kmeans"
+	"go-core"
 	"testing"
 )
 
 /**
- Tests the InRange method
- */
+Tests the InRange method
+*/
 func TestInRange(t *testing.T) {
 	var n int
 	k := 3
 
-	for go_kmeans.InRange(&k) {
+	for core.InRange(&k) {
 		n++
 	}
 
