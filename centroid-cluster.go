@@ -14,7 +14,7 @@ type CentroidCluster struct {
 	/**
 	Centroid point
 	*/
-	Centroid maths.Vector
+	Centroid maths.Vector32
 
 	/**
 	Cluster of points
@@ -94,7 +94,7 @@ func (ccs CentroidClusters) Delete(index int) CentroidClusters {
 Adds a single vector to the Cluster matrix of the assigned Centroid
 Returns Argument Invalid error if Centroid was not found
 */
-func (ccs CentroidClusters) AssignSingle(centroid maths.Vector, data maths.Vector) (ccss CentroidClusters, err error) {
+func (ccs CentroidClusters) AssignSingle(centroid maths.Vector32, data maths.Vector32) (ccss CentroidClusters, err error) {
 	for i := range ccs {
 		if (ccs[i]).Centroid.Equals(centroid) {
 			cluster := (ccs[i]).Cluster
