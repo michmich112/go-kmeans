@@ -23,7 +23,8 @@ type KmeansOptions struct {
 	Used to create a random Centroid,
 	Default: 0 - 2^64
 	*/
-	ValuesRange [][2]float32
+	// Depreciated
+	ValuesRange []maths.Range
 
 	/**
 	Number of Tries to approximate the centroids each time with new random ones
@@ -56,6 +57,7 @@ func Kmeans(input maths.Matrix, k int, options KmeansOptions) []maths.Matrix {
 }
 
 func Segment(input maths.Matrix, k int, options KmeansOptions, ch chan<- maths.Matrix) {
+	options.ValuesRange = input.GetValueRange()
 	centroids := CreateCentroids(k, len(input[0]), options.ValuesRange)
 	iter := options.MaxIter
 	for core.InRange(&iter) {
@@ -130,10 +132,10 @@ Generate centroids
 k int : number of centroids
 n int : size of vector (len(input[0]))
 */
-func CreateCentroids(k int, n int, intervals [][2]float32) maths.Matrix {
+func CreateCentroids(k int, n int, intervals []maths.Range) maths.Matrix {
 	// Normalizing intervals
 	if intervals == nil {
-		intervals = [][2]float32{}
+		intervals = []maths.Range{}
 	}
 	if len(intervals) < n {
 		//var intervals_tmp [][2]float64
@@ -142,25 +144,23 @@ func CreateCentroids(k int, n int, intervals [][2]float32) maths.Matrix {
 		//}
 		//intervals = intervals_tmp
 		for i := 0; i < n-len(intervals); i++ {
-			intervals = append(intervals, [2]float32{0, math.MaxFloat32})
+			intervals = append(intervals, maths.Range{0, math.MaxFloat32})
 		}
 	}
 
 	var centroids maths.Matrix
-	i := k
 
 	// Generate centroids
-	for core.InRange(&i) {
+	for i := 0; i < k; i++ {
 		centroids = append(centroids, RandomCentroid(n, intervals))
 	}
 	return centroids
 }
 
-func RandomCentroid(n int, intervals [][2]float32) maths.Vector32 {
+func RandomCentroid(n int, i []maths.Range) maths.Vector32 {
 	centroid := maths.Vector32{}
 	for j := 0; j < n; j++ {
-		min, max := intervals[j][0], intervals[j][1]
-		centroid.Push(min + rand.Float32()*(max-min))
+		centroid.Push(i[j].Min + rand.Float32()*(i[j].Max-i[j].Min))
 	}
 	return centroid
 }
